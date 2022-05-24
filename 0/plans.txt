@@ -1,0 +1,57 @@
+BankData will be split into 5 named indexes
+{
+  accounts: table, shares: table, transactions: table, loans: table, passwords: table
+}
+these are id indexed tables of "classes"
+
+class account
+id: undecided
+name: string
+owners: table
+  integer indexed table of usernames
+ownersPasswordIDs: table
+  integer indexed table of passwordIDs
+transactions: table
+  integer indexed table of transaction references
+shares: table
+  integer indexed table of share references
+balance: int
+doInterest: boolean
+interestRate: number
+interestType: string
+publicallyTraded: boolean
+maxAutoApprovedLoan: boolean
+lastInterestTime: int
+doOverdraft: boolean
+state: string
+
+
+
+class loan
+id: string
+balance: int
+interestRate: number
+interestType: string
+doInterest: boolean
+state: string
+dateTaken: int
+
+
+class share
+id: string
+owner: account
+issuingCompany: account
+
+
+
+class transaction
+id: string
+amount: int
+type: string
+state: string
+accounts: table
+
+
+PASSWORDS
+passwords: table
+  table indexed by randomly generated strings containing hashed passwords.

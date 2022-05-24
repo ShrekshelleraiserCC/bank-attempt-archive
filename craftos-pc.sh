@@ -1,0 +1,1 @@
+craftos --computers-dir "."

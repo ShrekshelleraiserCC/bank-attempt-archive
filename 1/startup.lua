@@ -1,0 +1,1 @@
+periphemu.create("right", "modem")
