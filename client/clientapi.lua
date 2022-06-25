@@ -63,6 +63,7 @@ function api.keyExchange()
   while errCount < 3 do
     local id, response, protocol = rednet.receive("BANK_HOST", TIME_OUT)
     if response and id == bankId then
+      print("Response recieved")
       if response.type == api.messageTypes.key_exchange and ecc.verify(response.message, response.message, response.sig) then
         -- key_exchange, and signiture is valid
         bankPublic = response.message
@@ -71,7 +72,7 @@ function api.keyExchange()
         return true
         -- If this fails then we assume that the response type was incorrect, so we wait for the correct response type
       end
-    elseif id == bankId then
+    else
       -- timed out, send the message again
       errCount = errCount + 1
       rednet.send(bankId, message, "BANK_CLIENT")
@@ -121,14 +122,14 @@ local function sendAndWaitForReply(message)
         -- signiture invalid, re-request the message
         rednet.send(bankId, toSend, "BANK_CLIENT")
       end
-    elseif response.type == api.messageTypes.error and id == bankId then
+    elseif response.type == api.messageTypes.error and id == bankId and errCount < 2 then
       lastErrReason = response.message
       errCount = errCount + 1
       if response.message == api.error.key_failure then
         api.keyExchange()
       end
     elseif ecc.verify(bankPublic, response.message, response.sig) and id == bankId then
-      -- signiture is valid, but message isn't encrypted
+      -- signiture is valid, but message isn't encrypted. Will also trigger on the third error
       return (not response.type == api.messageTypes.error), response.message
     elseif id == bankId then
       -- signiture is invalid
@@ -137,6 +138,7 @@ local function sendAndWaitForReply(message)
       rednet.send(bankId, toSend, "BANK_CLIENT")
     end
   end
+  -- This should be impossible to reach
   return false, lastErrReason
 end
 
@@ -146,22 +148,37 @@ local function get(target, id)
 end
 
 --- Get an account by ID
+-- @param id account UUID
+-- @return boolean success
+-- @return table account object
 function api.getAccountByID(id)
   return get("accounts", id)
 end
-
+--- Get a user by ID
+-- @param id user UUID
+-- @return boolean success
+-- @return table user object
 function api.getUserByID(id)
   return get("users", id)
 end
-
+--- Get a transaction by ID
+-- @param id transaction UUID
+-- @return boolean success
+-- @return table transaction object
 function api.getTransactionByID(id)
   return get("transactions", id)
 end
-
+--- Get a share by ID
+-- @param id share UUID
+-- @return boolean success
+-- @return table share object
 function api.getShareByID(id)
   return get("shares", id)
 end
-
+--- Get a loan by ID
+-- @param id loan UUID
+-- @return boolean success
+-- @return table loan object
 function api.getLoanByID(id)
   return get("loans", id)
 end
@@ -169,7 +186,6 @@ end
 --- Attempts to sign into an existing account
 -- @return boolean; success
 function api.logIn(username, password)
-  password = ecc.sha256.digest(password)
   local message = {type="log in", username=username, password=password}
   local state, response = sendAndWaitForReply(message)
   return state

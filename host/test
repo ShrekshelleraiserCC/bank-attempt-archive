@@ -1,0 +1,1 @@
+{shares={},users={Mason={id="Mason",accounts={ref="accounts",},password={"72b944cf-9fac-4f0d-acbc-26a62d8fc78e",ref="passwords",},meta="user",},},loans={},passwords={["72b944cf-9fac-4f0d-acbc-26a62d8fc78e"]={id="72b944cf-9fac-4f0d-acbc-26a62d8fc78e",hashedPassword="f0e4c2f76c58916ec258f246851bea091d14d4247a2fc3e18694461b1816e13b",},},accounts={},transactions={},}

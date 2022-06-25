@@ -1,1 +1,1 @@
-../0/ecc.lua
+/home/mason/Documents/CC/cc-bank/host/ecc.lua
