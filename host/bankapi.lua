@@ -1,4 +1,4 @@
-@module BankAPI
+--@module BankAPI
 local ecc = require("ecc")
 local expect = require("cc.expect")
 local bser = require("binserialize")
